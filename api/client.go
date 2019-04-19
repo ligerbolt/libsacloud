@@ -18,6 +18,21 @@ import (
 var (
 	// SakuraCloudAPIRoot APIリクエスト送信先ルートURL(末尾にスラッシュを含まない)
 	SakuraCloudAPIRoot = "https://secure.sakura.ad.jp/cloud/zone"
+	// SakuraCloudDevAPIRoot 開発環境用APIリクエスト送信先ルートURL(末尾にスラッシュを含まない)
+	SakuraCloudDevAPIRoot = "https://is1y-so.cloud.alpha.sakura.ad.jp/cloud/zone"
+	// 本番環境
+	ProductionEnv = "prod"
+	// 開発環境
+	DevelopmentEnv = "dev"
+	// Env4Zones ... ゾーンの稼働環境名をマッピング定義します
+	Env4Zones = map[string]string{
+		"is1a": ProductionEnv,
+		"is1b": ProductionEnv,
+		"tk1a": ProductionEnv,
+		"is1x": DevelopmentEnv,
+		"is1y": DevelopmentEnv,
+		"is1z": DevelopmentEnv,
+	}
 )
 
 // Client APIクライアント
@@ -87,6 +102,9 @@ func (c *Client) Clone() *Client {
 }
 
 func (c *Client) getEndpoint() string {
+	if Env4Zones[c.Zone] == DevelopmentEnv {
+		return fmt.Sprintf("%s/%s", SakuraCloudDevAPIRoot, c.Zone)
+	}
 	return fmt.Sprintf("%s/%s", SakuraCloudAPIRoot, c.Zone)
 }
 
